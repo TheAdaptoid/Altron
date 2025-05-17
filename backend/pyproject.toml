@@ -14,11 +14,11 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pylint>=3.3.7",
+    "pyright>=1.1.400",
     "pytest>=8.3.5",
     "pytest-asyncio>=0.26.0",
     "pytest-cov>=6.1.1",
     "ruff>=0.11.10",
-    "ty>=0.0.1a3",
 ]
 
 [tool.ruff]
@@ -70,6 +70,8 @@ max-complexity = 8
 # Pylint section - needs to be in separate .pylintrc file or set via CLI
 # But you can also configure it in pyproject.toml with extra tooling
 [tool.pylint.'MAIN']
+job = 0
+
 # Format and code style
 max-line-length = 88
 max-args = 5
@@ -105,3 +107,50 @@ min-similarity-lines = 6
 ignore-comments = true
 ignore-docstrings = true
 ignore-imports = true
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--verbose", "--cov=src/", "--asyncio-mode=auto"]
+
+[tool.pyright]
+include = ["src", "tests"]
+exclude = [
+    "**/__pycache__",
+    "**/.mypy_cache",
+    "**/.pytest_cache",
+    "**/.ruff_cache",
+]
+
+# Strict type checking settings
+typeCheckingMode = "strict"
+reportMissingImports = true
+reportMissingTypeStubs = true
+reportUnknownParameterType = true
+reportUnknownArgumentType = true
+reportUnknownLambdaType = true
+reportUnknownVariableType = true
+reportUnknownMemberType = true
+reportMissingTypeArgument = true
+reportInvalidTypeVarUse = true
+reportUnnecessaryIsInstance = true
+reportUnnecessaryCast = true
+reportUnnecessaryComparison = true
+reportUnnecessaryContains = true
+reportUnusedExpression = true
+reportWildcardImportFromLibrary = true
+reportOptionalSubscript = true
+reportOptionalMemberAccess = true
+reportOptionalCall = true
+reportOptionalIterable = true
+reportOptionalContextManager = true
+reportOptionalOperand = true
+strictListInference = true
+strictDictionaryInference = true
+strictSetInference = true
+strictParameterNoneValue = true
+enableTypeIgnoreComments = true
+
+# Python version and environment settings
+pythonVersion = "3.12"
+pythonPlatform = "Linux"
