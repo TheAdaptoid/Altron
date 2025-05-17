@@ -1,0 +1,107 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Altron Backend Service"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.11.18",
+    "fastapi>=0.115.12",
+    "requests>=2.32.3",
+    "uvicorn>=0.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "pylint>=3.3.7",
+    "pytest>=8.3.5",
+    "pytest-asyncio>=0.26.0",
+    "pytest-cov>=6.1.1",
+    "ruff>=0.11.10",
+    "ty>=0.0.1a3",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+fix = true
+show-fixes = true
+
+# Enable Ruff's strictest built-in rule sets
+lint.select = [
+    "E",    # pycodestyle (errors)
+    "F",    # pyflakes
+    "W",    # pycodestyle (warnings)
+    "C90",  # mccabe (complexity)
+    "I",    # isort (import sorting)
+    "N",    # pep8-naming
+    "D",    # pydocstyle (docstring rules)
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear (common bugs)
+    "A",    # flake8-builtins
+    "T20",  # flake8-print (no print statements)
+    "PT",   # flake8-pytest-style (if using pytest)
+    "RET",  # flake8-return
+    "SIM",  # flake8-simplify
+    "TID",  # tidy imports
+    "PL",   # pylint rules
+    "PERF", # performance issues
+    "RUF",  # Ruff-specific rules
+]
+
+lint.ignore = [
+    "D100", # Missing docstring in public module
+    "D104", # Missing docstring in public package
+]
+
+# Exclude test files from some docstring or complexity rules
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "D",
+    "PLR2004",
+] # Allow missing docstrings and magic value usage in tests
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 8
+
+# Pylint section - needs to be in separate .pylintrc file or set via CLI
+# But you can also configure it in pyproject.toml with extra tooling
+[tool.pylint.'MAIN']
+# Format and code style
+max-line-length = 88
+max-args = 5
+max-locals = 15
+max-branches = 10
+max-statements = 50
+max-parents = 7
+max-returns = 6
+max-nested-blocks = 3
+max-bool-expr = 5
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "invalid-name",               # Allow shorter test names
+    "too-few-public-methods",     # Often not useful in dataclasses
+]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "x", "y", "df", "db"]
+
+[tool.pylint.design]
+min-public-methods = 1
+max-attributes = 10
+
+[tool.pylint.format]
+expected-line-ending-format = "LF"
+
+[tool.pylint.similarities]
+min-similarity-lines = 6
+ignore-comments = true
+ignore-docstrings = true
+ignore-imports = true
