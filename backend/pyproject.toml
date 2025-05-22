@@ -7,13 +7,13 @@ requires-python = ">=3.12"
 dependencies = [
     "aiohttp>=3.11.18",
     "fastapi>=0.115.12",
+    "pydantic-settings>=2.9.1",
     "requests>=2.32.3",
     "uvicorn>=0.34.2",
 ]
 
 [dependency-groups]
 dev = [
-    "pylint>=3.3.7",
     "pyright>=1.1.400",
     "pytest>=8.3.5",
     "pytest-asyncio>=0.26.0",
@@ -23,7 +23,7 @@ dev = [
 
 [tool.ruff]
 line-length = 88
-target-version = "py311"
+target-version = "py312"
 fix = true
 show-fixes = true
 
@@ -67,52 +67,12 @@ convention = "google"
 [tool.ruff.lint.mccabe]
 max-complexity = 8
 
-# Pylint section - needs to be in separate .pylintrc file or set via CLI
-# But you can also configure it in pyproject.toml with extra tooling
-[tool.pylint.'MAIN']
-job = 0
-
-# Format and code style
-max-line-length = 88
-max-args = 5
-max-locals = 15
-max-branches = 10
-max-statements = 50
-max-parents = 7
-max-returns = 6
-max-nested-blocks = 3
-max-bool-expr = 5
-
-[tool.pylint.messages_control]
-disable = [
-    "missing-module-docstring",
-    "missing-class-docstring",
-    "missing-function-docstring",
-    "invalid-name",               # Allow shorter test names
-    "too-few-public-methods",     # Often not useful in dataclasses
-]
-
-[tool.pylint.basic]
-good-names = ["i", "j", "k", "x", "y", "df", "db"]
-
-[tool.pylint.design]
-min-public-methods = 1
-max-attributes = 10
-
-[tool.pylint.format]
-expected-line-ending-format = "LF"
-
-[tool.pylint.similarities]
-min-similarity-lines = 6
-ignore-comments = true
-ignore-docstrings = true
-ignore-imports = true
-
-
+# Pytest settings
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = ["--verbose", "--cov=src/", "--asyncio-mode=auto"]
 
+# Pyright settings
 [tool.pyright]
 include = ["src", "tests"]
 exclude = [
