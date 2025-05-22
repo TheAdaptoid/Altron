@@ -43,6 +43,6 @@ class InferenceParameters(BaseModel):
         description="Top-p sampling parameter for the model.",
     )
     max_tokens: int = Field(
-        default=250,
+        default=1000,
         description="Maximum number of tokens to generate.",
     )
