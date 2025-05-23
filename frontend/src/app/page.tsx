@@ -1,8 +1,9 @@
-'use client';  // Mark this as a client component for client-side interactivity
+"use client"; // Mark this as a client component for client-side interactivity
 
-import { useState } from 'react';
-import { MessageBubble } from '@/components/MessageBubble';
-import { ChatInput } from '@/components/ChatInput';
+import { useState } from "react";
+import { MessageBubble } from "@/components/MessageBubble";
+import { ChatInput } from "@/components/ChatInput";
+import HealthMonitor from "@/components/HealthMonitor";
 
 /**
  * Interface for chat message objects
@@ -18,7 +19,7 @@ interface Message {
 
 /**
  * Home - Main chat application component
- * 
+ *
  * This component manages the chat state and renders the chat interface.
  * It handles message sending and receiving, and maintains the message history.
  */
@@ -26,7 +27,7 @@ export default function Home() {
   // State for storing chat messages
   const [messages, setMessages] = useState<Message[]>([]);
   // State for the current input message
-  const [inputMessage, setInputMessage] = useState('');
+  const [inputMessage, setInputMessage] = useState("");
 
   /**
    * Handles sending a new message
@@ -43,9 +44,9 @@ export default function Home() {
       text: inputMessage,
       isUser: true,
     };
-    
-    setMessages(prev => [...prev, newMessage]);
-    setInputMessage('');
+
+    setMessages((prev) => [...prev, newMessage]);
+    setInputMessage("");
 
     // TODO: Add API call to backend here
     // For now, simulate an AI response after 1 second
@@ -55,7 +56,7 @@ export default function Home() {
         text: "This is a mock AI response. Connect your backend API to get real responses.",
         isUser: false,
       };
-      setMessages(prev => [...prev, aiResponse]);
+      setMessages((prev) => [...prev, aiResponse]);
     }, 1000);
   };
 
@@ -63,7 +64,12 @@ export default function Home() {
     <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
       {/* Header section */}
       <div className="bg-white dark:bg-gray-800 shadow px-6 py-4">
-        <h1 className="text-xl font-semibold text-gray-800 dark:text-white">AI Chat</h1>
+        <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
+          AI Chat
+        </h1>
+
+        {/* Health monitor component to check backend status */}
+        <HealthMonitor />
       </div>
 
       {/* Messages section - scrollable area for chat history */}
