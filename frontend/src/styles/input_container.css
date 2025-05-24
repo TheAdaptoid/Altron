@@ -1,0 +1,27 @@
+#input-container {
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  gap: 10px;
+
+  border-radius: 20px;
+  border: 2px solid #242424;
+  background-color: #242424;
+}
+
+.input-element {
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+  background-color: #333;
+
+  color: white;
+  font-size: 16px;
+}
