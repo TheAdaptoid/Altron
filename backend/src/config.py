@@ -7,7 +7,6 @@ class Settings(BaseSettings):
     # Application settings
     APP_NAME: str = "AI Chat Backend"
     DEBUG: bool = False
-    INFERENCE_URL: str = "http://localhost:8000/inference"
 
     # Logging settings
     LOG_LEVEL: str = "INFO"
@@ -19,6 +18,7 @@ class Settings(BaseSettings):
 
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "allow"
 
 
 settings = Settings()

@@ -1,7 +1,6 @@
 import logging
 import sys
 from pathlib import Path
-from typing import Any
 
 from src.config import settings
 
@@ -48,21 +47,3 @@ def setup_logger(name: str) -> logging.Logger:
     logger.addHandler(file_handler)
 
     return logger
-
-
-def log_request_details(logger: logging.Logger, request_data: dict[str, Any]) -> None:
-    """Log incoming request details.
-
-    Args:
-        logger (Logger): Logger instance to use
-        request_data (dict[str, Any]): Dictionary containing request details
-    """
-    logger.info(
-        "Request received",
-        extra={
-            "request_id": request_data.get("request_id"),
-            "method": request_data.get("method"),
-            "path": request_data.get("path"),
-            "params": request_data.get("params"),
-        },
-    )
