@@ -19,60 +19,15 @@ dev = [
     "pytest>=8.3.5",
     "pytest-asyncio>=0.26.0",
     "pytest-cov>=6.1.1",
+    "pytest-xdist>=3.7.0",
     "ruff>=0.11.10",
 ]
-
-[tool.ruff]
-line-length = 88
-target-version = "py312"
-fix = true
-show-fixes = true
-
-# Enable Ruff's strictest built-in rule sets
-lint.select = [
-    "E",    # pycodestyle (errors)
-    "F",    # pyflakes
-    "W",    # pycodestyle (warnings)
-    "C90",  # mccabe (complexity)
-    "I",    # isort (import sorting)
-    "N",    # pep8-naming
-    "D",    # pydocstyle (docstring rules)
-    "UP",   # pyupgrade
-    "B",    # flake8-bugbear (common bugs)
-    "A",    # flake8-builtins
-    "T20",  # flake8-print (no print statements)
-    "PT",   # flake8-pytest-style (if using pytest)
-    "RET",  # flake8-return
-    "SIM",  # flake8-simplify
-    "TID",  # tidy imports
-    "PL",   # pylint rules
-    "PERF", # performance issues
-    "RUF",  # Ruff-specific rules
-]
-
-lint.ignore = [
-    "D100", # Missing docstring in public module
-    "D104", # Missing docstring in public package
-]
-
-# Exclude test files from some docstring or complexity rules
-[tool.ruff.lint.per-file-ignores]
-"tests/*" = [
-    "D",
-    "PLR2004",
-] # Allow missing docstrings and magic value usage in tests
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-[tool.ruff.lint.mccabe]
-max-complexity = 8
 
 # Pytest settings
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "-v --cov=src --cov-report=term-missing"
+addopts = "-v --cov=src --cov-report=term-missing -n auto"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 

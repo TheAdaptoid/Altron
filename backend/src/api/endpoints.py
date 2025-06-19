@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.api.models import router as model_router
+from src.api.providers_api import router as provider_router
 
 router = APIRouter()
 
@@ -12,4 +12,4 @@ async def health_check():
 
 
 # Include model routes
-router.include_router(model_router, prefix="/models", tags=["models"])
+router.include_router(provider_router, prefix="/providers", tags=["providers"])

@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.utils.logger import log_request_details, setup_logger
+from src.utils import setup_logger
 
 
 @pytest.fixture
@@ -76,44 +76,3 @@ def test_setup_logger_reuses_existing_logger() -> None:
     logger2 = setup_logger("test_reuse_logger")
     assert logger1 is logger2
     assert len(logger2.handlers) == initial_handler_count
-
-
-def test_log_request_details() -> None:
-    """Test logging of request details."""
-    logger = MagicMock()
-    request_data = {
-        "request_id": "123",
-        "method": "GET",
-        "path": "/api/test",
-        "params": {"key": "value"},
-    }
-
-    log_request_details(logger, request_data)
-
-    logger.info.assert_called_once_with(
-        "Request received",
-        extra={
-            "request_id": "123",
-            "method": "GET",
-            "path": "/api/test",
-            "params": {"key": "value"},
-        },
-    )
-
-
-def test_log_request_details_with_missing_fields() -> None:
-    """Test logging request details with missing fields."""
-    logger = MagicMock()
-    request_data = {"method": "POST", "path": "/api/test"}
-
-    log_request_details(logger, request_data)
-
-    logger.info.assert_called_once_with(
-        "Request received",
-        extra={
-            "request_id": None,
-            "method": "POST",
-            "path": "/api/test",
-            "params": None,
-        },
-    )

@@ -13,6 +13,6 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
-      interval: 60s
+      interval: 300s # Check every 5 minutes
       timeout: 10s
       retries: 3
