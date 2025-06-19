@@ -1,0 +1,35 @@
+line-length = 88
+target-version = "py312"
+fix = true
+
+exclude = ["./tests/*"]
+
+[lint]
+select = [
+    "E",    # pycodestyle (errors)
+    "F",    # pyflakes
+    "W",    # pycodestyle (warnings)
+    "C90",  # mccabe (complexity)
+    "I",    # isort (import sorting)
+    "N",    # pep8-naming
+    "D",    # pydocstyle (docstring rules)
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear (common bugs)
+    "A",    # flake8-builtins
+    "T20",  # flake8-print (no print statements)
+    "PT",   # flake8-pytest-style (if using pytest)
+    "RET",  # flake8-return
+    "SIM",  # flake8-simplify
+    "TID",  # tidy imports
+    "PL",   # pylint rules
+    "PERF", # performance issues
+    "RUF",  # Ruff-specific rules
+]
+ignore = [
+    "D100", # Missing docstring in public module
+    "D104", # Missing docstring in public package
+]
+
+mccabe.max-complexity = 8
+
+pydocstyle = { convention = "google" }

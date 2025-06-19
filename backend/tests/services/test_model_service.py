@@ -1,15 +1,15 @@
-import pytest
-
 from src.models.ai_models import AIModel
-from src.services.model_service import ModelService
+from src.services import provider_service
 
 
-@pytest.mark.asyncio
-async def test_model_service_get_model():
+def test_get_models():
     """Test the model service get_model method."""
-    # Get model
-    result = await ModelService.get_available_models()
+    # Get models
+    result = provider_service.get_available_models()
 
     # Assertions
     assert isinstance(result, list)
-    assert isinstance(result[0], AIModel)
+    assert all(isinstance(model, AIModel) for model in result)
+
+    known_providers = provider_service.get_available_providers()
+    assert all(model.provider in known_providers for model in result)

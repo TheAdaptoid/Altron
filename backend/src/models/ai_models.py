@@ -8,26 +8,23 @@ class AIModelType(str, Enum):
 
     CHAT = "chat"
     EMBEDDING = "embedding"
-
-
-class AIModelStatus(str, Enum):
-    """Enum for AI model statuses."""
-
-    LOADED = "loaded"
-    UNLOADED = "not-loaded"
+    UNDEFINED = "undefined"
 
 
 class AIModel(BaseModel):
     """AI Model configuration."""
 
     id: str = Field(..., description="Unique identifier for the AI model.")
-    model_type: AIModelType = Field(
-        default=AIModelType.CHAT,
+    provider: str = Field(
+        ..., description="Provider of the AI model (e.g., OpenAI, Ollama)."
+    )
+    type: AIModelType = Field(
+        default=AIModelType.UNDEFINED,
         description="Type of the AI model (chat or embedding).",
     )
-    status: AIModelStatus = Field(
-        default=AIModelStatus.UNLOADED,
-        description="Current status of the AI model (loaded or unloaded).",
+    alias: str | None = Field(
+        default=None,
+        description="Optional alias for the AI model.",
     )
 
 
