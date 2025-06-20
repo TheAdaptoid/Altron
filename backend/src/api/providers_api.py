@@ -5,7 +5,7 @@ from src.services import provider_service
 from src.utils import setup_logger
 
 logger = setup_logger(__name__)
-router = APIRouter()
+router = APIRouter(prefix="/providers", tags=["providers"])
 
 
 @router.get(path="/", response_model=list[str])

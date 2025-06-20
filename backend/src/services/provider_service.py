@@ -19,11 +19,29 @@ def __retrieve_providers() -> dict[str, Provider]:
     }
 
 
+def get_provider(provider_name: str) -> Provider:
+    """Retrieve a specific AI model provider by name.
+
+    Args:
+        provider_name (str): The name of the provider to retrieve.
+
+    Returns:
+        Provider: The provider instance.
+
+    Raises:
+        ValueError: If the provider is not found.
+    """
+    providers: dict[str, Provider] = __retrieve_providers()
+    if provider_name not in providers:
+        raise ValueError(f"Provider '{provider_name}' not found.")
+    return providers[provider_name]
+
+
 def get_available_providers() -> tuple[str, ...]:
     """Retrieve a list of known AI model providers.
 
     Returns:
-        List of provider names.
+        tuple[str, ...]: List of provider names.
     """
     providers: dict[str, Provider] = __retrieve_providers()
     return tuple(providers.keys())
@@ -41,7 +59,7 @@ def get_available_models(
             Optional filter for the type of models to return.
 
     Returns:
-        List of available AI models.
+        list[AIModel]: List of available AI models.
 
     Raises:
         Exception: If there is an error retrieving models from any provider.
@@ -86,7 +104,7 @@ def get_provider_models(
             Optional filter for the type of models to return.
 
     Returns:
-        List of AI models from the specified provider.
+        list[AIModel]: List of AI models from the specified provider.
 
     Raises:
         ValueError: If the provider is not found.
