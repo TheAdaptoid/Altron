@@ -1,37 +1,38 @@
-from os import getenv
 from typing import Any
 
-from dotenv import load_dotenv
 from requests import Response
 
-from src.models import AIModel, AIModelType, ChatData, Provider
-from src.models.messages import ContentType, Message, MessageRole, MessageThread
-from src.utils import http_request
+from src.models import (
+    AIModel,
+    AIModelType,
+    ChatData,
+    Provider,
+    AgentMessage,
+    MessageThread,
+)
+from src.utils import http_request, load_env_var
 
 
 class LMStudio(Provider):
     """Provider implementation for LM Studio."""
 
+    MODELS_ENDPOINT: str = "/v1/models"
+    CONVERSE_ENDPOINT: str = "/v1/chat/completions"
+
     def __init__(self):
         """Initialize a provider instance for LM Studio."""
-        super().__init__(base_url=self.__load_url_from_env(), name="LM Studio")
+        super().__init__(base_url=load_env_var("LMSTUDIO_BASE_URL"), name="LM Studio")
 
-    def __load_url_from_env(self) -> str:
-        """Load the base url key from environment variables.
+    def _resolve_url(self, endpoint: str) -> str:
+        """Resolve the full URL for a given endpoint.
+
+        Args:
+            endpoint (str): The endpoint to resolve.
 
         Returns:
-            str: The base URL for the LM Studio API.
-
-        Raises:
-            ValueError: If the base URL is not found in the environment variables.
+            str: The full URL for the endpoint.
         """
-        load_dotenv()
-        url: str | None = getenv("LMSTUDIO_BASE_URL")
-        if not url:
-            raise ValueError(
-                "No URL found. Please set the `LMSTUDIO_BASE_URL` environment variable."
-            )
-        return url
+        return f"http://{self._base_url}{endpoint}"
 
     def get_models(
         self, limit: int | None = None, type_filter: AIModelType | None = None
@@ -50,7 +51,7 @@ class LMStudio(Provider):
         # Make the request
         response: Response = http_request(
             method="GET",
-            url=self._base_url + self.MODELS_ENDPOINT,
+            url=self._resolve_url(self.MODELS_ENDPOINT),
         )
 
         # Parse the response
@@ -71,7 +72,7 @@ class LMStudio(Provider):
         # Return the models, limited by the specified limit if provided
         return return_list[:limit] if limit is not None else return_list
 
-    def converse(self, model: AIModel, message_thread: MessageThread) -> Message:
+    def converse(self, model: AIModel, message_thread: MessageThread) -> AgentMessage:
         """Send a message to the AI model and receive a response.
 
         Args:
@@ -87,15 +88,15 @@ class LMStudio(Provider):
             "messages": [
                 {"role": msg.role.value, "content": msg.content}
                 for msg in message_thread.messages
-                if msg.content_type == ContentType.TEXT and isinstance(msg.content, str)
+                if isinstance(msg.content, str)  # Ensure content is not "empty"
             ],
-            "stream": False,  # Set to True for streaming responses
+            "stream": False,
         }
 
         # Make the request
         response: Response = http_request(
             method="POST",
-            url=self._base_url + self.CONVERSE_ENDPOINT,
+            url=self._resolve_url(self.CONVERSE_ENDPOINT),
             json=payload,
         )
 
@@ -106,17 +107,13 @@ class LMStudio(Provider):
         # Determine the next step based on the finish reason
         match chat_data.finish_reason:
             case "stop":
-                return Message(
-                    role=MessageRole.ASSISTANT,
+                return AgentMessage(
                     content=chat_data.content,
-                    content_type=ContentType.TEXT,
                 )
             case "length":
-                return Message(
-                    role=MessageRole.ASSISTANT,
+                return AgentMessage(
                     content=chat_data.content
                     + "\n\n[[The response was truncated due to length limits.]]",
-                    content_type=ContentType.TEXT,
                 )
             case _:
                 raise ValueError(

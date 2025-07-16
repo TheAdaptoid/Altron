@@ -1,8 +1,20 @@
 from src.models import AIModel, MessageThread, Message, MessageRole
 from src.models.ai_models import AIModelType
-from src.models.messages import ContentType
 from src.services.lmstudio import LMStudio
 from requests_mock import Mocker
+
+_lmstudio: LMStudio = LMStudio()
+MOCK_MODELS_ENDPOINT: str = "http://" + _lmstudio.base_url + _lmstudio.MODELS_ENDPOINT
+MOCK_CONVERSE_ENDPOINT: str = (
+    "http://" + _lmstudio.base_url + _lmstudio.CONVERSE_ENDPOINT
+)
+
+
+def test_lmstudio_init() -> None:
+    """Test the initialization of the LMStudio provider."""
+    lmstudio = LMStudio()
+    assert lmstudio.name == "LM Studio"
+    assert lmstudio.connected is True  # Check if the client is connected
 
 
 def test_get_models(requests_mock: Mocker) -> None:
@@ -10,7 +22,7 @@ def test_get_models(requests_mock: Mocker) -> None:
 
     # Mock the response for the models endpoint
     requests_mock.get(
-        url=lmstudio.base_url + lmstudio.MODELS_ENDPOINT,
+        url=MOCK_MODELS_ENDPOINT,
         json={
             "data": [
                 {
@@ -40,7 +52,7 @@ def test_get_models_type_filter(requests_mock: Mocker) -> None:
 
     # Mock the response for the models endpoint
     requests_mock.get(
-        url=lmstudio.base_url + lmstudio.MODELS_ENDPOINT,
+        url=MOCK_MODELS_ENDPOINT,
         json={
             "data": [
                 {
@@ -70,7 +82,7 @@ def test_converse(requests_mock: Mocker) -> None:
 
     # Mock the response for the models endpoint
     requests_mock.get(
-        url=lmstudio.base_url + lmstudio.MODELS_ENDPOINT,
+        url=MOCK_MODELS_ENDPOINT,
         json={
             "data": [
                 {
@@ -80,7 +92,7 @@ def test_converse(requests_mock: Mocker) -> None:
         },
     )
     requests_mock.post(
-        url=lmstudio.base_url + lmstudio.CONVERSE_ENDPOINT,
+        url=MOCK_CONVERSE_ENDPOINT,
         json={
             "choices": [
                 {
@@ -99,6 +111,7 @@ def test_converse(requests_mock: Mocker) -> None:
     message_thread: MessageThread = MessageThread(
         messages=[
             Message(
+                role=MessageRole.USER,
                 content="Hello, how are you?",
             )
         ]
@@ -110,8 +123,7 @@ def test_converse(requests_mock: Mocker) -> None:
     # Check that the response is not empty and has the expected role
     assert isinstance(response.content, str)
     assert response.content == "Hello! How can I assist you today?"
-    assert response.role == MessageRole.ASSISTANT
-    assert response.content_type == ContentType.TEXT
+    assert response.role == MessageRole.AGENT
 
 
 def test_converse_too_long(requests_mock: Mocker) -> None:
@@ -119,7 +131,7 @@ def test_converse_too_long(requests_mock: Mocker) -> None:
 
     # Mock the response for the models endpoint
     requests_mock.get(
-        url=lmstudio.base_url + lmstudio.MODELS_ENDPOINT,
+        url=MOCK_MODELS_ENDPOINT,
         json={
             "data": [
                 {
@@ -129,7 +141,7 @@ def test_converse_too_long(requests_mock: Mocker) -> None:
         },
     )
     requests_mock.post(
-        url=lmstudio.base_url + lmstudio.CONVERSE_ENDPOINT,
+        url=MOCK_CONVERSE_ENDPOINT,
         json={
             "choices": [
                 {
@@ -148,6 +160,7 @@ def test_converse_too_long(requests_mock: Mocker) -> None:
     message_thread: MessageThread = MessageThread(
         messages=[
             Message(
+                role=MessageRole.USER,
                 content="Hello, how are you?",
             )
         ]
@@ -162,5 +175,4 @@ def test_converse_too_long(requests_mock: Mocker) -> None:
         response.content
         == "Hello! How ca\n\n[[The response was truncated due to length limits.]]"
     )
-    assert response.role == MessageRole.ASSISTANT
-    assert response.content_type == ContentType.TEXT
+    assert response.role == MessageRole.AGENT

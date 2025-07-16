@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
-from src.models import AIModel, AIModelType, Message, MessageThread
+from src.models import AIModel, AIModelType, MessageThread, AgentMessage
 
 
 @dataclass
@@ -28,9 +28,6 @@ class ChatData:
 class Provider(ABC):
     """Abstract base class for AI model inference providers."""
 
-    MODELS_ENDPOINT: str = "/models"
-    CONVERSE_ENDPOINT: str = "/chat/completions"
-
     def __init__(self, name: str, base_url: str) -> None:
         """Initialize the provider with a name and base URL."""
         self._name: str = name
@@ -45,6 +42,12 @@ class Provider(ABC):
     def base_url(self) -> str:
         """Retrieve the base URL of the provider."""
         return self._base_url
+
+    @property
+    def connected(self) -> bool:
+        """Status of the connection to the provider."""
+        models: list[AIModel] = self.get_models(limit=1)
+        return len(models) > 0
 
     @abstractmethod
     def get_models(
@@ -65,7 +68,7 @@ class Provider(ABC):
         )
 
     @abstractmethod
-    def converse(self, model: AIModel, message_thread: MessageThread) -> Message:
+    def converse(self, model: AIModel, message_thread: MessageThread) -> AgentMessage:
         """Send a message to the AI model and receive a response.
 
         Args:

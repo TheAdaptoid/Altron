@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from requests_mock import Mocker
 
 from src.models.ai_models import AIModel, AIModelType
-from src.models.messages import ContentType, Message, MessageRole, MessageThread
+from src.models.messages import Message, MessageRole, MessageThread
 from src.services.lmstudio import LMStudio
 from src.api.converse_api import ConverseRequest
 
@@ -41,7 +41,6 @@ def test_converse_endpoint(client: TestClient, requests_mock: Mocker) -> None:
             messages=[
                 Message(
                     role=MessageRole.USER,
-                    content_type=ContentType.TEXT,
                     content="Hello, AI!",
                 )
             ],

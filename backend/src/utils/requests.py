@@ -20,6 +20,9 @@ def http_request(
     Returns:
         Response: The response object from the request
     """
+    if not url.startswith(("http://", "https://")):
+        raise ValueError("URL must start with 'http://' or 'https://'\nGot: " + url)
+
     headers = headers or {"Content-Type": "application/json"}
     response = request(method=method, url=url, headers=headers, json=json)
     response.raise_for_status()

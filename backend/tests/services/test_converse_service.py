@@ -40,7 +40,7 @@ def test_converse(requests_mock: Mocker) -> None:
 
     # Check that the response is of type Message
     assert isinstance(response_message, Message)
-    assert response_message.role == MessageRole.ASSISTANT
+    assert response_message.role == MessageRole.AGENT
 
 
 def test_converse_invalid_model_type(requests_mock: Mocker) -> None:
