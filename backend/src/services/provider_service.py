@@ -1,8 +1,7 @@
 from src.models import AIModel, AIModelType, Provider
 
 # Inference providers
-from src.services.lmstudio import LMStudio
-from src.services.openai import OpenAI
+from src.providers import LMStudio, OpenAI
 from src.utils import setup_logger
 
 logger = setup_logger(__name__)
@@ -19,11 +18,29 @@ def __retrieve_providers() -> dict[str, Provider]:
     }
 
 
+def get_provider(provider_name: str) -> Provider:
+    """Retrieve a specific AI model provider by name.
+
+    Args:
+        provider_name (str): The name of the provider to retrieve.
+
+    Returns:
+        Provider: The provider instance.
+
+    Raises:
+        ValueError: If the provider is not found.
+    """
+    providers: dict[str, Provider] = __retrieve_providers()
+    if provider_name not in providers:
+        raise ValueError(f"Provider '{provider_name}' not found.")
+    return providers[provider_name]
+
+
 def get_available_providers() -> tuple[str, ...]:
     """Retrieve a list of known AI model providers.
 
     Returns:
-        List of provider names.
+        tuple[str, ...]: List of provider names.
     """
     providers: dict[str, Provider] = __retrieve_providers()
     return tuple(providers.keys())
@@ -41,17 +58,20 @@ def get_available_models(
             Optional filter for the type of models to return.
 
     Returns:
-        List of available AI models.
+        list[AIModel]: List of available AI models.
 
     Raises:
         Exception: If there is an error retrieving models from any provider.
     """
-    # Initialize providers
-    providers: dict[str, Provider] = __retrieve_providers()
-
-    # Aggregate models from all providers
+    # Get provider names from get_available_providers
+    provider_names = get_available_providers()
     model_list: list[AIModel] = []
-    for name, provider in providers.items():
+    for name in provider_names:
+        # Retrieve provider instance
+        providers: dict[str, Provider] = __retrieve_providers()
+        provider = providers.get(name)
+        if provider is None:
+            continue
         try:
             logger.info(f"Retrieving models from provider: {name}")
             models: list[AIModel] = provider.get_models(type_filter=type_filter)
@@ -86,7 +106,7 @@ def get_provider_models(
             Optional filter for the type of models to return.
 
     Returns:
-        List of AI models from the specified provider.
+        list[AIModel]: List of AI models from the specified provider.
 
     Raises:
         ValueError: If the provider is not found.

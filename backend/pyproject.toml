@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "aiohttp>=3.11.18",
     "fastapi>=0.115.12",
+    "openai>=1.96.1",
     "pydantic-settings>=2.9.1",
     "requests>=2.32.3",
     "uvicorn>=0.34.2",
@@ -20,6 +21,7 @@ dev = [
     "pytest-asyncio>=0.26.0",
     "pytest-cov>=6.1.1",
     "pytest-xdist>=3.7.0",
+    "requests-mock>=1.12.1",
     "ruff>=0.11.10",
 ]
 
