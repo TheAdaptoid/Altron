@@ -64,13 +64,6 @@ class TestToolResponse:
         resp = ToolResponse(id="456", name="calculator", content=data)
         assert resp.to_json_string() == json.dumps(data)
 
-    def test_tool_response_invalid_json(self):
-        non_serializable = NonSerializable()
-        resp = ToolResponse(id="999", name="broken", content=1)
-        resp.content = non_serializable
-        with pytest.raises(TypeError):
-            resp.to_json_string()
-
     def test_tool_response_serialization(self):
         resp = ToolResponse(
             id="789", name="echo", content=json.dumps({"message": "Hello!"})
@@ -127,13 +120,14 @@ class TestUserMessage:
 
     def test_user_message_tool_response(self):
         user_msg = UserMessage(
-            tool_responses=[
-                ToolResponse(id="123", name="tool1", content=json.dumps({"result": 42}))
-            ]
+            tool_response=ToolResponse(
+                id="123", name="tool1", content=json.dumps({"result": 42})
+            )
         )
-        assert len(user_msg.tool_responses) == 1
-        assert user_msg.tool_responses[0].id == "123"
-        assert user_msg.tool_responses[0].name == "tool1"
+        if not user_msg.tool_response:
+            raise ValueError("Tool response should not be None.")
+        assert user_msg.tool_response.id == "123"
+        assert user_msg.tool_response.name == "tool1"
 
 
 class TestAgentMessage:

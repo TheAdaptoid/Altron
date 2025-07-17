@@ -27,6 +27,13 @@ async def get_provider_models(
     """Get a list of AI models from a specific provider."""
     try:
         return provider_service.get_provider_models(provider_name, limit, type_filter)
+    except ValueError as ve:
+        logger.error(
+            f"Provider '{provider_name}' not found",
+            exc_info=True,
+            extra={"error": str(ve)},
+        )
+        raise HTTPException(status_code=404, detail=str(ve)) from ve
     except Exception as e:
         logger.error(
             f"Error retrieving models from provider {provider_name}",

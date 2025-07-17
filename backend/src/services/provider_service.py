@@ -1,8 +1,7 @@
 from src.models import AIModel, AIModelType, Provider
 
 # Inference providers
-from src.services.lmstudio import LMStudio
-from src.services.openai import OpenAI
+from src.providers import LMStudio, OpenAI
 from src.utils import setup_logger
 
 logger = setup_logger(__name__)
@@ -64,12 +63,15 @@ def get_available_models(
     Raises:
         Exception: If there is an error retrieving models from any provider.
     """
-    # Initialize providers
-    providers: dict[str, Provider] = __retrieve_providers()
-
-    # Aggregate models from all providers
+    # Get provider names from get_available_providers
+    provider_names = get_available_providers()
     model_list: list[AIModel] = []
-    for name, provider in providers.items():
+    for name in provider_names:
+        # Retrieve provider instance
+        providers: dict[str, Provider] = __retrieve_providers()
+        provider = providers.get(name)
+        if provider is None:
+            continue
         try:
             logger.info(f"Retrieving models from provider: {name}")
             models: list[AIModel] = provider.get_models(type_filter=type_filter)

@@ -1,47 +1,19 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import Any
 
-from src.models import AIModel, AIModelType, MessageThread, AgentMessage
-
-
-@dataclass
-class ChatData:
-    """Data class to hold chat response data."""
-
-    content: str
-    finish_reason: str
-
-    @classmethod
-    def from_response(cls, response: dict[str, Any]) -> "ChatData":
-        """Create a ChatData instance from a response dictionary."""
-        choices: list[dict[str, Any]] = response.get("choices", [])
-        if not choices:
-            raise ValueError("No choices found in the response.")
-        chat_data: dict[str, Any] = choices[0]  # Get the first choice
-        return ChatData(
-            content=chat_data["message"]["content"],
-            finish_reason=chat_data.get("finish_reason", "unknown"),
-        )
+from src.models import AgentMessage, AIModel, AIModelType, MessageThread
 
 
 class Provider(ABC):
     """Abstract base class for AI model inference providers."""
 
-    def __init__(self, name: str, base_url: str) -> None:
+    def __init__(self, name: str) -> None:
         """Initialize the provider with a name and base URL."""
         self._name: str = name
-        self._base_url: str = base_url
 
     @property
     def name(self) -> str:
         """Retrieve the name of the provider."""
         return self._name
-
-    @property
-    def base_url(self) -> str:
-        """Retrieve the base URL of the provider."""
-        return self._base_url
 
     @property
     def connected(self) -> bool:
@@ -62,6 +34,20 @@ class Provider(ABC):
         Returns:
             list[AIModel]: A list of AIModel instances
                 representing the available models.
+        """
+        raise NotImplementedError(
+            "This method should be implemented by subclasses of Provider."
+        )
+
+    @abstractmethod
+    def get_model(self, model_id: str) -> AIModel:
+        """Retrieve an AIModel instance by its unique identifier.
+
+        Args:
+            model_id (str): The unique identifier of the AI model to retrieve.
+
+        Returns:
+            AIModel: The AI model instance corresponding to the provided model_id.
         """
         raise NotImplementedError(
             "This method should be implemented by subclasses of Provider."

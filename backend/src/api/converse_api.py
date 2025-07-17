@@ -23,6 +23,23 @@ async def converse(converse_request: ConverseRequest) -> Message:
         return converse_service.converse(
             converse_request.model, converse_request.message_thread
         )
+    except TypeError as e:
+        logger.error(
+            "Invalid model type for conversation",
+            exc_info=True,
+            extra={"error": str(e)},
+        )
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    except ValueError as e:
+        logger.error(
+            "Validation error in conversation",
+            exc_info=True,
+            extra={"error": str(e)},
+        )
+        # Use 404 for not found, 400 for other validation errors
+        if "not found" in str(e):
+            raise HTTPException(status_code=404, detail=str(e)) from e
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.error(
             "Error processing conversation",

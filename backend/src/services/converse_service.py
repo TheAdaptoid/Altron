@@ -41,9 +41,13 @@ def converse(model: AIModel, message_thread: MessageThread) -> Message:
     Raises:
         ValueError: If the provider for the model is not found.
     """
-    # validate the model
+    # validate the model type
     if model.type is not AIModelType.CHAT:
-        raise ValueError(f"Model '{model.id}' is not a chat model.")
+        raise TypeError(f"Model '{model.id}' is not a chat model.")
+
+    # validate the message thread
+    if not message_thread.messages or len(message_thread.messages) == 0:
+        raise ValueError("Message thread must contain at least one message.")
 
     # retrieve the AI model provider
     provider: Provider = __retrieve_provider(model)

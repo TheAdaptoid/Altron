@@ -126,12 +126,15 @@ class UserMessage(Message):
 
     This class represents a message sent by the user in a conversation.
     It includes the role of the message originator, which is set to 'user',
-    and a list of tool responses associated with the user message.
+    and a tool response if applicable.
 
     Attributes:
         role (MessageRole): The role of the message originator, set to 'user'.
+        timestamp (str): The timestamp of when the message was created,
+            in ISO 8601 format.
+        content (str): The content of the message.
         tool_responses (list[ToolResponse]):
-            A list of tool responses associated with the user message.
+            A tool response associated with the user message.
     """
 
     role: MessageRole = Field(
@@ -139,9 +142,9 @@ class UserMessage(Message):
         description="The role of the message originator, set to 'user'.",
         frozen=True,
     )
-    tool_responses: list[ToolResponse] = Field(
-        default_factory=list[ToolResponse],
-        description="A list of tool responses associated with the user message.",
+    tool_response: ToolResponse | None = Field(
+        default=None,
+        description="A tool response associated with the user message.",
         frozen=True,
     )
 
@@ -155,6 +158,9 @@ class AgentMessage(Message):
 
     Attributes:
         role (MessageRole): The role of the message originator, set to 'assistant'.
+        timestamp (str): The timestamp of when the message was created,
+            in ISO 8601 format.
+        content (str): The content of the message.
         reasoning_content (str | None): The reasoning content of the agent message,
             if applicable.
         tool_requests (list[ToolRequest]):
@@ -182,8 +188,8 @@ class MessageThread(BaseModel):
         default="New Thread",
         description="The title of the message thread.",
     )
-    messages: list[Message] = Field(
-        default_factory=list[Message],
+    messages: list[Message | UserMessage | AgentMessage] = Field(
+        default_factory=list[Message | UserMessage | AgentMessage],
         description="The messages in the thread.",
     )
     modified_at: str = Field(

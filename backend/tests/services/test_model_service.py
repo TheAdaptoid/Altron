@@ -3,23 +3,9 @@ from src.services import provider_service
 import pytest
 
 
-def test_get_models():
-    """Test the model service get_model method."""
-    # Get models
-    result = provider_service.get_available_models()
-
-    # Assertions
-    assert isinstance(result, list)
-    assert all(isinstance(model, AIModel) for model in result)
-
-    known_providers = provider_service.get_available_providers()
-    assert all(model.provider in known_providers for model in result)
-
-
-def test_get_provider():
-    """Test the model service get_provider method."""
-    # Get a specific provider
-    provider_name = "OpenAI"  # Replace with an actual provider name
+@pytest.mark.parametrize("provider_name", ["OpenAI", "LM Studio"])
+def test_get_provider_valid(provider_name):
+    """Test the model service get_provider method with valid providers."""
     provider = provider_service.get_provider(provider_name)
 
     # Assertions
@@ -32,3 +18,28 @@ def test_get_provider_not_found():
     # Attempt to get a non-existent provider
     with pytest.raises(ValueError):
         provider_service.get_provider("NonExistent")
+
+
+def test_get_available_models_type_and_provider():
+    """Test the model service get_available_models method for type and provider."""
+    # Get models
+    models = provider_service.get_available_models()
+
+    # Assertions
+    assert isinstance(models, list)
+    assert all(isinstance(model, AIModel) for model in models)
+
+    known_providers = provider_service.get_available_providers()
+    assert all(model.provider in known_providers for model in models)
+
+
+def test_get_available_models_empty(monkeypatch):
+    """Test the model service get_available_models method with no available providers."""
+    # Simulate no available providers
+    monkeypatch.setattr(provider_service, "get_available_providers", lambda: [])
+
+    # Get models
+    models = provider_service.get_available_models()
+
+    # Assertions
+    assert models == []
