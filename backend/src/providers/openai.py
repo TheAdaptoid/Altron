@@ -18,7 +18,7 @@ from src.models import (
 )
 from src.utils import load_env_var
 
-ALLOWED_MODELS: tuple[str, ...] = ("gpt-4o-mini", "gpt-4o", "gpt-4")
+ALLOWED_MODELS: tuple[str, ...] = ("gpt-4o-mini", "gpt-4o", "gpt-4.1", "gpt-4.1-mini")
 
 
 class OpenAI(Provider):
@@ -73,17 +73,28 @@ class OpenAI(Provider):
             self._convert_to_ai_model(model) for model in openai_models
         ]
 
+        # Filter models based on allowed ids
+        allowed_models: list[AIModel] = []
+        for model in generalized_models:
+            # Skip non-chat models
+            if model.type is not AIModelType.CHAT:
+                allowed_models.append(model)
+
+            # Only include chat models that are in the allowed list
+            if model.id in ALLOWED_MODELS:
+                allowed_models.append(model)
+
         # Filter models based on type
         if type_filter:
-            generalized_models = [
-                model for model in generalized_models if model.type == type_filter
+            allowed_models = [
+                model for model in allowed_models if model.type == type_filter
             ]
 
         # Limit the number of models returned
         if limit is not None:
-            generalized_models = generalized_models[:limit]
+            allowed_models = allowed_models[:limit]
 
-        return generalized_models
+        return allowed_models
 
     def get_model(self, model_id: str) -> AIModel:
         """Retrieves an AI model by its identifier from the OpenAI client.
