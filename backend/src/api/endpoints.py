@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from src.api.converse_api import router as converse_router
 from src.api.providers_api import router as provider_router
 
 router = APIRouter()
@@ -12,4 +13,5 @@ async def health_check():
 
 
 # Include model routes
-router.include_router(provider_router, prefix="/providers", tags=["providers"])
+router.include_router(provider_router)
+router.include_router(converse_router)
