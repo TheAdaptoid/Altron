@@ -1,0 +1,12 @@
+.PlaceHolder {
+    justify-content: center;
+    align-items: center;
+
+    display: flex;
+    flex-grow: 1;
+
+    background-color: #333;
+
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
