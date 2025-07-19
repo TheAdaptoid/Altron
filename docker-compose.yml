@@ -16,3 +16,13 @@ services:
       interval: 300s # Check every 5 minutes
       timeout: 10s
       retries: 3
+
+  frontend:
+    build:
+      context: frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./frontend/build:/usr/share/nginx/html
+    restart: unless-stopped

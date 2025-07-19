@@ -1,28 +1,15 @@
-interface Message {
-    id: string;
-    content: string;
-    role: "user" | "assistant";
+import { Message, MessageThread } from "../types/Messages";
+
+async function submitUserMessage(userMessage: Message, messageThread: MessageThread) {
+    // Log the input value to the console
+    console.log("User input submitted:", userMessage.content);
+
+    // Add the user message to the message thread
+    messageThread.addMessage(userMessage);
+
+    // Send the message thread to the server or handle it as needed
+    // For now, we will just log the updated message thread
+    console.log("Updated message thread:", messageThread);
 }
 
-class MessageThread {
-    constructor(
-        public id: string,
-        public messages: Message[],
-        public createdAt: Date,
-        public updatedAt: Date
-    ) {}
-
-    addMessage(message: Message) {
-        this.messages.push(message);
-        this.updatedAt = new Date();
-    }
-
-    getLastMessage(): Message | null {
-        return this.messages.length > 0
-            ? this.messages[this.messages.length - 1]
-            : null;
-    }
-}
-
-export { MessageThread };
-export type { Message };
+export { submitUserMessage };

@@ -1,72 +1,148 @@
 import React from "react";
 import "../styles/UserInputContainer.css";
-import { Message, MessageThread } from "../logic/converse";
+import { UserMessage, MessageThread } from "../types/Messages";
+import { getInputField, HTMLInputField, getSelectField } from "../utils/Dom";
+import { submitUserMessage } from "../logic/converse";
+import { fetchModels } from "../logic/Models";
+import { Model, ModelType } from "../types/Models";
+
+const USER_INPUT_FIELD_ID = "userInputField";
+
 /**
- * Retrieves the input field element with the ID "userInputField" from the DOM.
+ * Validates user input before submitting a message.
  *
- * @returns {HTMLTextAreaElement} The input field element.
- * @throws {Error} If the element is not found or is not an HTMLTextAreaElement.
+ * Checks if the input is empty or contains only whitespace.
+ * Returns false if the input is invalid, true otherwise.
+ * Additional validation logic can be added here.
+ *
+ * @param input - The user input string to validate.
+ * @returns {boolean} - True if the input is valid, false otherwise.
  */
-function getInputField(): HTMLTextAreaElement {
-    // Get the input field element by its ID
-    const inputField = document.getElementById("userInputField");
-    // Check if the input field exists and is an HTMLTextAreaElement
-    if (inputField && inputField instanceof HTMLTextAreaElement) {
-        return inputField;
+function validateInput(input: string): boolean {
+    // Check if the input is empty or contains only whitespace
+    if (!input || input.trim() === "") {
+        console.warn("Input is empty or invalid");
+        return false;
     }
-    // If not found or not an HTMLTextAreaElement, throw an error
-    throw new Error("Input field not found or is not an HTMLTextAreaElement");
+    // Additional validation logic can be added here
+    return true;
 }
 
-function submitHandler() {
-    // Get the input field value
-    const inputField: HTMLTextAreaElement = getInputField();
+/**
+ * Submits a user message to the message thread.
+ *
+ * Gets the input field, validates the user input, clears the input field,
+ * creates a user message object, and submits the message to the message thread.
+ *
+ * @param messageThread - The message thread to submit the message to.
+ */
+async function submitHandler(messageThread: MessageThread) {
+    // Get the input field and submit the user message
+    const inputField: HTMLInputField = getInputField("userInputField");
 
-    // Get the value from the input field
-    const inputValue: string = inputField.value.trim();
-    inputField.value = ""; // Clear the input field after submission
-
-    // Check if the input value is empty
-    if (inputValue === "") {
-        console.warn("Input field is empty");
+    // Validate the input before submitting
+    if (!validateInput(inputField.value)) {
         return;
     }
 
-    // Log the input value to the console
-    console.log("User input submitted:", inputValue);
+    // Get the user input and clear the input field
+    const userInput: string = inputField.value.trim();
+    inputField.value = ""; // Clear the input field after submission
+
+    // Create a user message object
+    const userMessage: UserMessage = {
+        id: crypto.randomUUID(),
+        content: userInput,
+        role: "user",
+    };
+
+    // Submit the user message
+    await submitUserMessage(userMessage, messageThread);
 }
 
-function KeyDownHandler(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-    // Insert a new line into the input field
+/**
+ * Handles key down events on the user input field.
+ *
+ * The following keys are handled:
+ * - Enter + Shift: Insert a new line into the input field.
+ * - Tab: Insert a tab character into the input field.
+ * - Enter: Submit the user message.
+ *
+ * @param event - The keyboard event.
+ * @param messageThread - The message thread to submit the message to.
+ */
+function KeyDownHandler(
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
+    messageThread: MessageThread
+) {
     if (event.key === "Enter" && event.shiftKey) {
+        // Insert a new line into the input field
         event.preventDefault();
-        const inputField: HTMLTextAreaElement = getInputField();
+        const inputField: HTMLInputField = getInputField(USER_INPUT_FIELD_ID);
         inputField.value += "\n";
-
-        // Insert a tab character into the input field
     } else if (event.key === "Tab") {
+        // Insert a tab character into the input field
         event.preventDefault();
-        const inputField: HTMLTextAreaElement = getInputField();
+        const inputField: HTMLInputField = getInputField(USER_INPUT_FIELD_ID);
         inputField.value += "\t";
-
-        // Submit the input when Enter is pressed
     } else if (event.key === "Enter") {
+        // Submit the input when Enter is pressed
         event.preventDefault();
-        submitHandler();
+        submitHandler(messageThread);
     }
 }
 
+async function LoadModels(modelsLoaded: boolean, setModelsLoaded: React.Dispatch<React.SetStateAction<boolean>>) {
+    // Check if models are already loaded
+    if (modelsLoaded) {
+        console.log("Models are already loaded. No new models fetched.");
+        return; // If so, return
+    }    
+    
+    // Simulate a delay for fetching models
+    const modelList: Model[] = await fetchModels(
+        undefined,
+        ModelType.Chat
+    );
+
+    // Get the select field
+    const modelSelect: HTMLSelectElement = getSelectField("modelSelect");
+
+    // Clear existing options
+    modelSelect.innerHTML = "";
+
+    // Populate the select field with model options
+    modelList.forEach((model) => {
+        const option = document.createElement("option");
+        option.value = model.id;
+        option.textContent = model.alias || model.id;
+        modelSelect.appendChild(option);
+    });
+
+    // Update the state to indicate models are loaded
+    setModelsLoaded(true);
+    console.log("Models loaded successfully.");
+}
+
 function UserInputContainer({ messageThread }: { messageThread: MessageThread }) {
+    // State to track if models have already been loaded
+    const [modelsLoaded, setModelsLoaded] = React.useState(false);
     
     return (
         <div className="UserInputContainer">
             <textarea
-                id="userInputField"
+                id={USER_INPUT_FIELD_ID}
                 className="UserInputField"
                 placeholder="Type here..."
-                onKeyDown={KeyDownHandler}
+                onKeyDown={(event) => KeyDownHandler(event, messageThread)}
             />
-            <button onClick={submitHandler}>/\</button>
+            <div className="OptionDiv">
+                <button>Attach File</button>
+                <select id="modelSelect" onFocus={() => LoadModels(modelsLoaded, setModelsLoaded)}>
+                    <option value="Null">Loading Models...</option>
+                </select>
+                <button onClick={() => submitHandler(messageThread)}>Submit</button>
+            </div>
         </div>
     );
 }

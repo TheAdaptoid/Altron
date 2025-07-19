@@ -1,0 +1,32 @@
+:root {
+    --border-radius: 8px;
+    --background-light: #f9f9f9;
+    --border-color: #ccc;
+
+    --light-gray: #bcbdc0;
+    --medium-gray: #8a8d91;
+    --dark-gray: #272932;
+    --primary-color: #b23a48;
+    --secondary-color: #b7990d;
+}
+
+.App {
+    height: 100vh;
+    width: 100vw;
+
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--dark-gray);
+}
+
+header {
+    height: 10vh;
+
+    text-align: center;
+    padding: 10px;
+    color: var(--light-gray);
+
+    background-color: var(--medium-gray);
+    border-bottom: 4px groove var(--medium-gray);
+}
