@@ -64,26 +64,14 @@ def get_available_models(
         Exception: If there is an error retrieving models from any provider.
     """
     # Get provider names from get_available_providers
-    provider_names = get_available_providers()
+    provider_names: tuple[str, ...] = get_available_providers()
+
+    # Get models from each provider
     model_list: list[AIModel] = []
     for name in provider_names:
-        # Retrieve provider instance
-        providers: dict[str, Provider] = __retrieve_providers()
-        provider = providers.get(name)
-        if provider is None:
-            continue
-        try:
-            logger.info(f"Retrieving models from provider: {name}")
-            models: list[AIModel] = provider.get_models(type_filter=type_filter)
-        except Exception as e:
-            logger.error(
-                f"Error retrieving models from provider {name}: {e}",
-                exc_info=True,
-                extra={"error": str(e)},
-            )
-            continue  # Skip this provider if an error occurs
-
-        logger.info(f"Retrieved {len(models)} models from provider: {name}")
+        models: list[AIModel] = get_provider_models(
+            provider_name=name, type_filter=type_filter
+        )
         model_list.extend(models)
 
     # limit the number of models if a limit is specified
@@ -133,4 +121,5 @@ def get_provider_models(
         )
         raise
 
+    logger.info(f"Retrieved {len(models)} models from provider: {provider_name}")
     return models

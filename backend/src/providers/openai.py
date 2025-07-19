@@ -54,7 +54,7 @@ class OpenAI(Provider):
         )
 
     def get_models(
-        self, limit: int | None = None, type_filter: str | None = None
+        self, limit: int | None = None, type_filter: AIModelType | None = None
     ) -> list[AIModel]:
         """Retrieve a list of available AI models from OpenAI.
 
@@ -69,32 +69,23 @@ class OpenAI(Provider):
         openai_models = self._client.models.list()
 
         # Convert to AIModel instances
-        generalized_models: list[AIModel] = [
+        model_list: list[AIModel] = [
             self._convert_to_ai_model(model) for model in openai_models
         ]
 
-        # Filter models based on allowed ids
-        allowed_models: list[AIModel] = []
-        for model in generalized_models:
-            # Skip non-chat models
-            if model.type is not AIModelType.CHAT:
-                allowed_models.append(model)
-
-            # Only include chat models that are in the allowed list
-            if model.id in ALLOWED_MODELS:
-                allowed_models.append(model)
-
         # Filter models based on type
         if type_filter:
-            allowed_models = [
-                model for model in allowed_models if model.type == type_filter
-            ]
+            model_list = [model for model in model_list if model.type == type_filter]
+
+        # Remove unsupported models
+        if type_filter and type_filter == AIModelType.CHAT:
+            model_list = [model for model in model_list if model.id in ALLOWED_MODELS]
 
         # Limit the number of models returned
         if limit is not None:
-            allowed_models = allowed_models[:limit]
+            model_list = model_list[:limit]
 
-        return allowed_models
+        return model_list
 
     def get_model(self, model_id: str) -> AIModel:
         """Retrieves an AI model by its identifier from the OpenAI client.
