@@ -10,9 +10,9 @@
  * The {@link ModelType.Undefined} type is for undefined models.
  */
 enum ModelType {
-    Chat = "chat",
-    Embedding = "embedding",
-    Undefined = "undefined",
+    Chat = 'chat',
+    Embedding = 'embedding',
+    Undefined = 'undefined',
 }
 
 /**

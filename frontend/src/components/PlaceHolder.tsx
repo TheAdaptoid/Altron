@@ -1,5 +1,5 @@
-import React from "react";
-import "../styles/PlaceHolder.css";
+import React from 'react';
+import '../styles/PlaceHolder.css';
 
 function PlaceHolder() {
     return (

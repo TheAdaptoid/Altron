@@ -9,7 +9,7 @@ class Message {
     constructor(
         // id: string,
         public content: string,
-        public role: "user" | "assistant"
+        public role: 'user' | 'assistant'
     ) {}
 }
 
@@ -20,7 +20,7 @@ class UserMessage extends Message {
      * @property role - Always "user" for user messages.
      */
     constructor(content: string) {
-        super(content, "user");
+        super(content, 'user');
     }
 }
 
@@ -31,7 +31,7 @@ class AssistantMessage extends Message {
      * @property role - Always "assistant" for assistant messages.
      */
     constructor(content: string) {
-        super(content, "assistant");
+        super(content, 'assistant');
     }
 }
 

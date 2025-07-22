@@ -1,11 +1,11 @@
-import React from "react";
-import { UserMessage, MessageThread, AssistantMessage } from "../types/Messages";
-import { getInputField, HTMLInputField, getSelectField } from "../utils/Dom";
-import { fetchModels } from "../logic/Models";
-import { Model, ModelType } from "../types/Models";
-import "../styles/UserInputContainer.css";
+import React from 'react';
+import { UserMessage, MessageThread, AssistantMessage } from '../types/Messages';
+import { getInputField, HTMLInputField, getSelectField } from '../utils/Dom';
+import { fetchModels } from '../logic/Models';
+import { Model, ModelType } from '../types/Models';
+import '../styles/UserInputContainer.css';
 
-const USER_INPUT_FIELD_ID = "userInputField";
+const USER_INPUT_FIELD_ID = 'userInputField';
 
 /**
  * Validates user input before submitting a message.
@@ -19,8 +19,8 @@ const USER_INPUT_FIELD_ID = "userInputField";
  */
 function validateInput(input: string): boolean {
     // Check if the input is empty or contains only whitespace
-    if (!input || input.trim() === "") {
-        console.warn("Input is empty or invalid");
+    if (!input || input.trim() === '') {
+        console.warn('Input is empty or invalid');
         return false;
     }
     // Additional validation logic can be added here
@@ -40,7 +40,7 @@ async function submitHandler(
     setMessageThread: React.Dispatch<React.SetStateAction<MessageThread>>
 ) {
     // Get the input field and submit the user message
-    const inputField: HTMLInputField = getInputField("userInputField");
+    const inputField: HTMLInputField = getInputField('userInputField');
 
     // Validate the input before submitting
     if (!validateInput(inputField.value)) {
@@ -49,11 +49,11 @@ async function submitHandler(
 
     // Get the user input and clear the input field
     const userInput: string = inputField.value.trim();
-    inputField.value = ""; // Clear the input field after submission
+    inputField.value = ''; // Clear the input field after submission
 
     // Create a user message object
     const userMessage: UserMessage = new UserMessage(userInput);
-    const agentMessage: AssistantMessage = new AssistantMessage("Echo: " + userInput);
+    const agentMessage: AssistantMessage = new AssistantMessage('Echo: ' + userInput);
 
     // Add the user message to the message thread
     const updatedThread: MessageThread = {
@@ -79,17 +79,17 @@ async function KeyDownHandler(
     messageThread: MessageThread,
     setMessageThread: React.Dispatch<React.SetStateAction<MessageThread>>
 ) {
-    if (event.key === "Enter" && event.shiftKey) {
+    if (event.key === 'Enter' && event.shiftKey) {
         // Insert a new line into the input field
         event.preventDefault();
         const inputField: HTMLInputField = getInputField(USER_INPUT_FIELD_ID);
-        inputField.value += "\n";
-    } else if (event.key === "Tab") {
+        inputField.value += '\n';
+    } else if (event.key === 'Tab') {
         // Insert a tab character into the input field
         event.preventDefault();
         const inputField: HTMLInputField = getInputField(USER_INPUT_FIELD_ID);
-        inputField.value += "\t";
-    } else if (event.key === "Enter") {
+        inputField.value += '\t';
+    } else if (event.key === 'Enter') {
         // Submit the input when Enter is pressed
         event.preventDefault();
         await submitHandler(messageThread, setMessageThread);
@@ -114,7 +114,7 @@ async function LoadModels(
 ) {
     // Check if models are already loaded
     if (selectedModel !== null) {
-        console.log("Models are already loaded. No new models fetched.");
+        console.log('Models are already loaded. No new models fetched.');
         return; // If so, return
     }
 
@@ -122,14 +122,14 @@ async function LoadModels(
     const modelList: Model[] = await fetchModels(undefined, ModelType.Chat);
 
     // Get the select field
-    const modelSelect: HTMLSelectElement = getSelectField("modelSelect");
+    const modelSelect: HTMLSelectElement = getSelectField('modelSelect');
 
     // Clear existing options
-    modelSelect.innerHTML = "";
+    modelSelect.innerHTML = '';
 
     // Populate the select field with model options
     modelList.forEach((model) => {
-        const option = document.createElement("option");
+        const option = document.createElement('option');
         option.value = model.id;
         option.textContent = model.alias || model.id;
         modelSelect.appendChild(option);
@@ -138,7 +138,7 @@ async function LoadModels(
     // Update state
     setSelectedModel(modelList[0]);
     setAvailableModels(modelList);
-    console.log("Models loaded successfully.");
+    console.log('Models loaded successfully.');
 }
 
 /**
@@ -170,7 +170,7 @@ async function ModelSelectHandler(
         if (selectedModel !== undefined) {
             setSelectedModel(selectedModel);
         } else {
-            throw new Error("Selected model not found");
+            throw new Error('Selected model not found');
         }
     }
 }

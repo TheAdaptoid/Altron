@@ -1,7 +1,7 @@
-import { ModelType, Model } from "../types/Models";
+import { ModelType, Model } from '../types/Models';
 
-const BACKEND_HOST: string = "http://localhost:8000";
-const MODELS_ENDPOINT: string = "/api/v1/providers/models";
+const BACKEND_HOST: string = 'http://localhost:8000';
+const MODELS_ENDPOINT: string = '/api/v1/providers/models';
 
 /**
  * Fetches models from the backend with optional limit and filter.
@@ -25,9 +25,9 @@ async function fetchModels(limit?: number, modelType?: ModelType): Promise<Model
     }
 
     const response = await fetch(fullUrl, {
-        method: "GET",
+        method: 'GET',
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
         },
     });
     const data = await response.json();

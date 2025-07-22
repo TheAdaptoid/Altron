@@ -29,7 +29,7 @@ function getInputField(elementId: string): HTMLInputField {
 
     // If not a valid input field, throw an error
     throw new Error(
-        "Input field was found but is not an HTMLTextAreaElement or HTMLInputElement"
+        'Input field was found but is not an HTMLTextAreaElement or HTMLInputElement'
     );
 }
 
@@ -54,7 +54,7 @@ function getSelectField(elementId: string): HTMLSelectElement {
     }
 
     // If not a valid select field, throw an error
-    throw new Error("Select field was found but is not an HTMLSelectElement");
+    throw new Error('Select field was found but is not an HTMLSelectElement');
 }
 
 /**
@@ -69,7 +69,7 @@ function getDiv(elementId: string): HTMLDivElement {
         throw new Error(`Div with ID "${elementId}" not found`);
     }
     if (!(div instanceof HTMLDivElement)) {
-        throw new Error("Div was found but is not an HTMLDivElement");
+        throw new Error('Div was found but is not an HTMLDivElement');
     }
     return div;
 }
