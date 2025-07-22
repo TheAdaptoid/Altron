@@ -22,11 +22,11 @@ async def get_providers() -> list[str]:
 
 @router.get(path="/{provider_name}/models", response_model=list[AIModel])
 async def get_provider_models(
-    provider_name: str, limit: int | None = None, type_filter: AIModelType | None = None
+    provider_name: str, limit: int | None = None, model_type: AIModelType | None = None
 ) -> list[AIModel]:
     """Get a list of AI models from a specific provider."""
     try:
-        return provider_service.get_provider_models(provider_name, limit, type_filter)
+        return provider_service.get_provider_models(provider_name, limit, model_type)
     except ValueError as ve:
         logger.error(
             f"Provider '{provider_name}' not found",
@@ -45,11 +45,11 @@ async def get_provider_models(
 
 @router.get(path="/models", response_model=list[AIModel])
 async def get_all_models(
-    limit: int | None = None, type_filter: AIModelType | None = None
+    limit: int | None = None, model_type: AIModelType | None = None
 ) -> list[AIModel]:
     """Get a list of available AI models."""
     try:
-        return provider_service.get_available_models(limit, type_filter)
+        return provider_service.get_available_models(limit, model_type)
     except Exception as e:
         logger.error("Error retrieving models", exc_info=True, extra={"error": str(e)})
         raise HTTPException(status_code=500, detail=str(e)) from e

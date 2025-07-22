@@ -54,10 +54,25 @@ function getSelectField(elementId: string): HTMLSelectElement {
     }
 
     // If not a valid select field, throw an error
-    throw new Error(
-        "Select field was found but is not an HTMLSelectElement"
-    );
+    throw new Error("Select field was found but is not an HTMLSelectElement");
 }
 
-export { getInputField , getSelectField};
+/**
+ * Retrieves a div element from the DOM by its ID.
+ *
+ * @param elementId - The ID of the div element
+ * @returns The div element, or throws an error if the element does not exist.
+ */
+function getDiv(elementId: string): HTMLDivElement {
+    const div = document.getElementById(elementId);
+    if (!div) {
+        throw new Error(`Div with ID "${elementId}" not found`);
+    }
+    if (!(div instanceof HTMLDivElement)) {
+        throw new Error("Div was found but is not an HTMLDivElement");
+    }
+    return div;
+}
+
+export { getInputField, getSelectField, getDiv };
 export type { HTMLInputField };

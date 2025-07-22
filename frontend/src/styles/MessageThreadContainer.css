@@ -1,0 +1,32 @@
+.MessageThreadContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    width: 95vw;
+
+    overflow-y: scroll;
+}
+
+.MessageThreadContainer::-webkit-scrollbar {
+    width: 0px;
+}
+
+.MessageContainer {
+    display: flex;
+    flex-direction: column;
+
+    padding: 10px;
+    margin: 10px;
+
+    border-radius: 8px;
+    background-color: var(--light-gray);
+}
+
+.UserMessageContainer {
+    border: 2px solid var(--medium-gray);
+}
+
+.AssistantMessageContainer {
+    border: 2px solid var(--secondary-color);
+}
